@@ -1,0 +1,201 @@
+
+//看两段js
+//匿名函数里面的a使用了var关键字来定义，所以当我们在函数外打印a的时候，得到的是1，一开始定义的值。
+
+var a = 1;
+(function(){
+    var a = 5;
+})();
+console.log(a);//1
+//less版本----------------
+//less应用此思想设计变量：即局部使用var来申明
+@color:red;
+p{
+    @color:blue;
+    color:@color;//blue
+}
+a{
+    color:@color;//red
+}
+
+//再看一段js
+//匿名函数里面的a因为没有使用var关键字来定义，所以当我们在函数外打印a的时候，得到的是5，改变了一开始定义的1
+
+var a = 1;
+(function(){
+    a = 5;
+})();
+console.log(a);//5
+//sass版本----------------
+//sass 应用此思想设计变量：即在局部不使用var来申明
+$color:red;
+p{
+    $color:blue;
+    color:$color;//blue
+}
+a{
+    color:$color;//blue
+}
+
+//Sass语法：
+//Sass变量以$开头，用:分割变量名与变量值，以;结尾。如： $color: red;
+//
+//Sass变量，不区分中横线和下划线，比如定义变量为$bg-color，那么使用$bg_color也能访问到哦！
+
+//sass @import 导入规则：
+//CSS预处理器的特点之一是可以把你的代码分割成很多个文件，而且不会影响性能。Sass最有用的一个特性就是可以将你的样式表分隔成很多个单独的文件。
+//然后，你可以在主样式文件中通过Sass的@import命令引入你所需要的.scss文件。只要在你的开发环境下，不管你调用多少文件，最终将编译出一个CSS样式文件。
+
+// 编译时会将@import的scss文件合并进来只生成一个CSS文件；但是如果你在sass文件中导入css文件，导入的css文件不会合并到编译后的文件中，而是以@import方式存在。
+// 所有的sass导入文件都可以忽略后缀名.scss。一般来说基础的文件命名方法以_开头，如_mixin.scss。这种文件在导入的时候可以不写下划线，可写成@import "mixin"。
+
+// sass文件后缀名： 有两种 sass 和scss
+//sass注释格式：
+//**
+//**模块名字**/
+
+//在有全局变量的情况下，sass是没有局部变量的。意思是如果要看到sass的局部变量，请不要设置全局变量。代码为证：
+p{
+    $color:blue;
+    color:$color;//blue
+}
+a{
+    color:$color;//$color未定义
+}
+//-------
+//因为sass的代码是从上到下解析的，后面变量值会覆盖前面的。
+//代码执行到p的color值的时候颜色是上面的blue色，然后由于我们在a中又改变了$color的值为红色，所以后面所有p元素范围内用到$color这个变量的都为红色
+p{
+    $color:blue;
+    color:$color;//blue
+
+    a{
+        $color:red;
+        color:$color;//red
+    }
+
+    background-color:$color;//red
+
+    span{
+        color:$color;//red
+    }
+}
+div{
+    color:$color;//$color未定义
+}
+//变量默认值!default------------------
+//作用：
+//!default可以用来设置一个默认变量，其不会覆盖前面设置的相同变量；
+//换句话理解：假设变量申明带有!default，那么如果在此申明之前没有这个变量的申明，则用这个值；反之如果之前有申明，则用之前申明的值。
+//这就是基本的变量覆盖，第一次申明的有无!default都一样。所以你要区分这两种情况：
+
+//第一种，使用默认值
+//变量申明带有!default，但是之前没有这个变量的申明
+$color:blue !default;
+p{
+    color:$color;//blue
+}
+//第二种，使用前面定义的值
+$color:red;
+//变量申明带有!default，但是前面还有这个变量的申明.
+$color:blue !default;
+p{
+    color:$color;//red
+}
+
+//第三种错误的用法，先!default申明
+$color:red !default;
+$color:blue;
+//这种错误写法等价于
+$color:red;
+$color:blue;
+
+//这两种用法的一个复杂案例。
+$color-basic:orange !default;
+.block{
+    color:$color-basic; //orange
+}
+em{
+    $color-basic:red;  //定义在元素内部的一个局部变量。
+    a{
+        color:$color-basic; //red
+    }
+}
+span{
+    color:$color-basic;  //orange
+}
+
+//变量全局变量!global------------------
+//
+//
+//如果定义在局部的变量，与它同级的选择器中是无法使用的：这个时候，就需要提升$color为全局变量，在变量值之后，加上!global,示例如下：
+body{
+  $color: blue !global;
+  color: $color;
+  .container{
+    background-color: $color;
+  }
+}
+
+// 会出现错误，未定义的变量
+footer{
+  color: $color;
+}
+
+//多值变量------------------
+
+//强大的Sass，还提供了一种特殊的变量，即为多值变量，在一个变量中，可以定义多个值，然后通过制定的函数访问，示例如下：
+
+// List类型的多值变量
+$px: 5px 10px 15px 20px;
+
+// Map类型的多值变量
+$map: (id1: test, id2: testGrid, color: red);
+
+body{
+  // 此处需要注意，索引是从1开始，不是从0哦。
+  margin-left: nth($px, 1);
+
+  // 使用map-get访问，当心key的使用，指定了不存在的key会导致生成的css异常
+  #{map-get($map, id2)}{
+    color: red;
+  }
+
+  #id{
+    color: map-get($map, color);
+  }
+}
+
+//------------------------------------
+/*变量后面加...*/
+
+
+//这种变量加...的方式只出现在传递参数中。能使用多个值的属性里面都可以用。
+//比如：@mixin给css3样式 如 box-shadow，gradient传递多个参数时候。
+@mixin box-shadow($shadow...){
+    -webkit-box-shadow:$shadow;
+    -moz-box-shadow:$shadow;
+    box-shadow:$shadow;
+}
+//------------------------------------
+/*变量用#{}包裹*/
+
+//一般来说变量都是用于属性值的；如果变量用在属性名或者选择器上，就得以#{}包裹起来。
+$btnClass: btn !default;
+$borderDirection:  top !default;
+
+.#{$btnClass}{
+    border-#{$borderDirection}:1px solid #ccc;
+}
+//多个变量一起申明，把多个相关的值写在一个变量里，然后通过nth($var,index)来获取第几个值。
+$linkColor: red blue !default;
+a{
+    color:nth($linkColor,1);
+
+    &:hover{
+        color:nth($linkColor,2);
+    }
+}
+
+
+

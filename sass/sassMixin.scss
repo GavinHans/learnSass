@@ -1,0 +1,81 @@
+//SASS的Mixins可以一次性定义功能模块，让你在任何地方调用，并且可以无限制的重用。
+//Compass是一个SASS的mixins库。
+//Mixins的黄金规则：
+//1.将相似的风格样式通过@mixin来定义成一个模块。在需要使用的地方通过@include将@mixin定义好的模块调用进来；请注意这里的一个关键词相似的。
+//2.但存在一个缺点，Mixins会将相同的样式重复定义，而不是合并；Mixins主要是用于重用，而不是用来指定具体的属性值。当需要传递参数的时候考虑使用mixins.
+//
+//
+
+/*
+@content和mixins的结合用法
+通过使用Sass的@content命令，你可以将整个样式代码传递给mixin，Sass将会在调用mixin的声明中替换这些代码块。
+ */
+
+
+@mixin Mixins名称（参数:参数值,参数:参数值）{
+    /*公用样式*/
+}
+@mixin Mixins名称（$变量名...）{
+    /*公用样式*/
+}
+
+/*
+selector {
+    @includ Mixins名称(参数值);
+}
+ */
+
+/*
+
+例如这个实例，我们应该用@mxin来创建不同半径的圆角，而不是用来创建一个具体值的@mixin。
+换句话来说，如果你创建的Mixins没有传参数，那您就是一种错误的使用方法。基于这点出发，我们可以把上例中的@mixin rounded传入一个$radius参数：
+ */
+@mixin rounded($radius){
+    -webkit-border-radius: $radius;
+    -moz-border-radius: $radius;
+    -o-border-radius: $radius;
+    -ms-border-radius: $radius;
+    border-radius: $radius;
+}
+//在@mixin中，我们除了可以传参之外，还可以给参数设置一个默认值：
+@mixin rounded($radius:5px){
+    -webkit-border-radius: $radius;
+    -moz-border-radius: $radius;
+    -o-border-radius: $radius;
+    -ms-border-radius: $radius;
+    border-radius: $radius;
+}
+
+
+/*
+使用Mixins和继承的细节
+了解了@include定义的@mixin,@extend定义的.class和@extend定义的%placeholders差异之后，我们在写SASS时，有一些细节大家应该了解：
+    *  不要使用没有设置参数的@mixin，他们应该是.class或者%placeholders;
+    *  不要轻意（从不使用）@extend调用.class。会得到你意想不到的结果，特别是定义的.class出现在嵌套或其他的样式表中，你应该使用@extend调用%placeholders;
+    *  不要使用太深的选择器嵌套。
+    *  如果你能避免，不要使用标签名。这不是一个taxative规则，但比id或者类名的性能要更低；
+    *  不要使用子选择器符号>，在SASS中很无效；
+    *  不要使用同史选择器+，配合你当前的标记他是非常无效。
+    *  不要太相信SASS的自动编译，你应该时时检查生成的CSS。在SASS中纠错能力比较差；
+ */
+/*
+@include vs @extend对于初学SASS的同学来说，看到SASS编译出来的CSS都会感到困惑。不是说SASS能让编译出来的CSSS更简洁吗？为什么一到自己手中，反面编译出来的代码出现很多重复的呢？都想有什么方法能让代码避免生成重复的。
+随后在SASS中产生了Mixins，我们可以将相似的样式定义成一个函数模块，然后通过@include来调用。但很多时候，我们又不需要这么强大的功能。这个时候出现@extend来调用定义好相同样式的类，可没想到，这个功能是方便了，但无形中为使用者埋下了一个地雷。为了解除这个隐患，在SASS3.2中增加了一个%placeholders功能。让大家能很方便定义一些功能简单的相同样式模块。
+
+通过前面的介绍@mixin需要@include来调用，而.class和%placeholders需要@extend来调用，那么两者有何区别呢？
+
+    *  @include主要是用来调用@mixin定义的函数模块。在@mixin中可以定义一个相似功能样式，而且可以设置变量、定义参数和默认参数值；
+    *  @extend主要是用来调用.class或者%placeholders定义的属性模块；在.class或者%placeholders中可以定义一个相同样式，但这里面不能定义参数；
+    *  @include每次调用相同的@mixin时，编译出来的CSS相同样式不会进行合并；
+    *  @extend每次调用相同的 .class时，如果.class在样式出现多次，那么编译出来的CSS有可能不是您需要的样式；
+    *  @extend每次调用相同的%placeholders时，编译出来的CSS相同样式会进行合并。
+
+ */
+
+
+
+
+
+
+
+

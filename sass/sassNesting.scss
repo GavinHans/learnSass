@@ -1,0 +1,174 @@
+
+/*
+嵌套(Nesting)
+sass的嵌套包括两种：一种是选择器的嵌套；另一种是属性的嵌套。我们一般说起或用到的都是选择器的嵌套。
+
+所谓选择器嵌套指的是在一个选择器中嵌套另一个选择器来实现继承，从而增强了sass文件的结构性和可读性。
+
+在选择器嵌套中：经常使用&表示父元素选择器
+
+在选择器嵌套中：别让你的嵌套层级超过四层
+
+*/
+
+//Sass还提供了一些运算符，可以在代码中做一些简单的计算，其中包括+、-、*和/等。
+//使用Sass运算符做一些运算时，在运算符前后要留有空格。
+//在CSS属性中碰到缩写属性带有/符号的，在编写Sass代码时都需使用插值#{}，以免造成不必要的编译错误
+//例如：font: $font-size/#{$line-height} $font-family;
+
+/*连体符& */
+
+.block {
+  color: green;
+
+  &:after {
+    content:"";
+    display:table;
+  }
+  #{&}__element{
+    color:orange;
+  }
+  #{&}--modify{
+    color:blue;
+  }
+  &.info {
+    color: lime;
+  }
+  .page &{
+    color: yellow;
+  }
+}
+
+
+//----------
+$socials: twitter facebook twitter google rss email;
+
+@mixin icon-socials {
+  @each $social in $socials {
+    .iocn-#{$social} {
+      background: url("../images/#{$social}.png") no-repeat;
+    }
+  }
+}
+
+@include icon-socials;
+/*在Sass中使用连体符&*/
+//http://www.w3cplus.com/preprocessor/use-ampersand-in-selector-name-with-Sass.html
+//在Sass中可以使用&和伪元素、伪类配合使用,就是用&替代元素自身。
+$lte-ie: true !default;
+
+.clearfix {
+    @if $lte-ie {
+        *zoom: 1;
+    }
+
+    &:before,
+    &:after {
+        content: "";
+        display: table;
+    }
+    &:after {
+        clear: both;
+        overflow: hidden;
+    }
+}
+
+//在Sass中，同样可以使用&来替代选择器,&和相连的类名之间不能有任何的空格.
+//不然就会变成CSS选择器中的后代选择器
+.mod {
+    &.on{
+        color: green;
+    }
+}
+
+//在Sass中可以通过Sass的层级嵌套来实现后代选择器
+//有时候在Sass先写了子元素的效果，但还需要另一个地方来覆盖，那么&将会起到大作用
+//&在选择器后面时,前面必须要有空格.
+a {
+    color: red;
+    .nav-menu &{
+        color: blue;
+    }
+}
+//在Sass中，同样可以使用&符来替代相邻兄弟选择器中某个元素。
+//这跟其所处的位置以及对应使用的选择器符号很有关系。
+////input[type="text"]元素紧邻label元素。
+lable {
+    color: green;
+    & + input[type="text"] {
+        border: 1px solid green;
+    }
+}
+//在Sass中，媒体查询配合&符，可以轻松的让你管理几个不同版式的样式
+.main {
+    float: left;
+    width: 45em;
+    @media (max-width: 480px) {
+        & {
+            float: none;
+            width: 100%;
+
+
+        }
+    }
+}
+
+/*==*/
+.main {
+    float: left;
+    width: 45em;
+    & {
+        @media (max-width: 480px) {
+            float: none;
+            width: 100%;
+        }
+    }
+}
+
+/*&另一用法#{&}*/
+//在Sass中#{&}只是一个变量。可以做为选择器插值。
+block{
+    #{&}.bar{
+        color:red;
+    }
+    #{&}-element{
+        color:red;
+    }
+    /*@at-root 只是一个变量 而不会嵌套。*/
+    // The same result, different ways of writing
+    @at-root #{&}_element{
+        color:red;
+    }
+    @at-root #{&}_modifier{
+        color:green;
+    }
+    // The same result, different ways of writing
+    @at-root{
+        #{&}_element{
+            color:red;
+        }
+        #{&}_modifier{
+            color:green;
+        }
+    }
+
+}
+
+//如果你想在一个示例中一次性使用一个前缀，或者你觉得这个没有意义，要重新组织你的类名；
+//如果你想在多个文件中都使用同一个前缀，使用原来的方法仍然是有用的。
+//summary:给变量存储一个字符串文本或一个值是非常有用的。然而给选择器使用变量想法，起初是一个好的想法，但他们会存在一些严重的问题。
+$my-name:mycss-;
+.#{$my-name}{
+    &btn{
+        color:red;
+    }
+    &input{
+        font-size:14px;
+    }
+    &header{
+        color:green;
+    }
+}
+
+
+

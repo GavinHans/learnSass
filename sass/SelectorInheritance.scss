@@ -1,0 +1,15 @@
+
+/*
+继承Selector Inheritance
+
+SASS的继承，可以将相同样式规则定义在一个类中，然后能过@extend来调用。这样就可以把相同样式合并在一起.
+这样就可以解决使用@mixin致使样式重复出现多次的问题.
+所以在使用SASS继承时有一个规则:通过@extend引用的类名，你要有绝对的自信，它从未用在几个地方。
+你不敢保证，你未来你或你的同事不在别的地方引用这个类名，无意之中，你就会踩上这个地雷，把这个事情搞砸。 这是个隐患。
+
+%placeholder 是SASS的一个强大的特性。使用%和@extend就可以将继承中埋下的地雷给排了。
+%只是一个占位符，他不是正常的选择器，只要不通过@extend调用，他是不会产生任何代码量。
+http://www.w3cplus.com/preprocessor/sass-basic-mixins-nesting-placeholders-extend.html
+
+
+ */
